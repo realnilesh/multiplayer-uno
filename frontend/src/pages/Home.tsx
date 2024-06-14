@@ -4,12 +4,11 @@ import Button from '../library/button';
 import Navbar from '../Navbar';
 import Modal from '../library/modal';
 import '../index.css';
-import RulesModal from '../library/rulesModal';
+import { useAuth } from '../contexts/AuthContext';
 
 const Home: React.FC = () => {
     const navigate = useNavigate();
     const [showModal, setShowModal] = useState(false);
-    const [showRulesModal, setShowRulesModal] = useState(false);
     const CreateGame = () => {
         // Logic to create a game
         console.log('Create Game');
@@ -21,12 +20,26 @@ const Home: React.FC = () => {
         setShowModal(true);
         console.log('Join Game with code');
     };
+    const auth = useAuth();
+
+    const handleLogin = () => {
+        auth.login();
+    };
+
+    const handleLogout = () => {
+        auth.logout();
+    };
 
     return (
-        <div className="min-h-screen bg-uno-bg bg-cover bg-center flex flex-col relative">
-            <Navbar />
+        <div className="dimensions bg-uno-bg bg-cover bg-center flex flex-col relative">
+            <Navbar
+                isLoggedIn={auth.isLoggedIn()}
+                username={auth.getUser()?.name || ''}
+                onLogin={handleLogin}
+                onLogout={handleLogout}
+            />
             <div className="flex flex-col items-center justify-center flex-grow">
-                <div className="w-[520px] h-[180px] sm:w-[600px] sm:h-[200px] md:w-[720px] md:h-[235px] lg:w-[900px] lg:h-[300px] overflow-hidden mt-4 mb-5">
+                <div className="UnoImg overflow-hidden mt-4 mb-5">
                     <img
                         src="/unologo.png"
                         alt="UNO Logo"
@@ -53,11 +66,8 @@ const Home: React.FC = () => {
                 />
             </div>
             {showModal && <Modal onClose={() => setShowModal(false)} />}
-            {showRulesModal && (
-                <RulesModal onClose={() => setShowRulesModal(false)} />
-            )}
         </div>
     );
 };
 
-export default Home;
+export default Home
